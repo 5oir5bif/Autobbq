@@ -1,0 +1,38 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: autobbq-redis
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: autobbq-backend
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./.env
+    environment:
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ./backend/storage:/app/backend/storage
+    depends_on:
+      - redis
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:4000}
+    container_name: autobbq-frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:4000}
+    depends_on:
+      - backend

@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Env files (keep examples)
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env.local
+*.env
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+
+# Build outputs
+backend/dist/
+frontend/.next/
+coverage/
+.turbo/
+
+# Runtime storage and generated data
+backend/storage/uploads/*
+backend/storage/subtitles/*
+backend/storage/output/*
+backend/storage/temp/*
+backend/storage/data/*.json
+!backend/storage/uploads/.gitkeep
+!backend/storage/subtitles/.gitkeep
+!backend/storage/output/.gitkeep
+!backend/storage/temp/.gitkeep
+!backend/storage/data/.gitkeep
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Backup / temp files
+*.bak
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Archives / exports
+*.zip
+*.tar
+*.tar.gz
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
