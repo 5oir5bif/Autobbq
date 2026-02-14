@@ -79,3 +79,395 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+.neo-page,
+.neo-editor-page {
+  min-height: calc(100vh - 88px);
+}
+
+.neo-shell {
+  display: grid;
+  gap: 20px;
+}
+
+.neo-card {
+  background: #fff;
+  border-radius: 28px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 12px 12px 24px #e0e0e0, -12px -12px 24px #ffffff;
+}
+
+.neo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.neo-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.neo-brand h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.neo-brand p {
+  margin: 2px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.neo-brand-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: #ff7f50;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 24px;
+  transform: rotate(3deg);
+  box-shadow: 0 10px 20px rgba(255, 127, 80, 0.28);
+}
+
+.neo-icon-btn,
+.neo-ghost-btn,
+.neo-primary-btn,
+.neo-success-btn,
+.neo-pill-btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 14px;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.neo-icon-btn {
+  padding: 10px 14px;
+  background: #fff;
+  color: #64748b;
+  box-shadow: 6px 6px 12px #e0e0e0, -6px -6px 12px #ffffff;
+}
+
+.neo-icon-btn:hover {
+  transform: translateY(-1px);
+  color: #ff7f50;
+}
+
+.neo-config-card {
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+}
+
+.neo-config-card h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #ff7f50;
+}
+
+.neo-config-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.neo-full-span {
+  grid-column: 1 / -1;
+}
+
+.neo-config-grid label,
+.neo-field-group,
+.neo-slider-group {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.neo-config-grid input,
+.neo-field-group input,
+.neo-slider-row input,
+.neo-number-input,
+.neo-field-group select {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  outline: none;
+  background: #f8fafc;
+}
+
+.neo-config-grid input:focus,
+.neo-field-group input:focus,
+.neo-slider-row input:focus,
+.neo-number-input:focus,
+.neo-field-group select:focus {
+  border-color: #ff7f50;
+  box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.18);
+}
+
+.neo-config-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.neo-upload-zone {
+  padding: 48px 28px;
+  border: 2px dashed #f0f0f0;
+  text-align: center;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+
+.neo-upload-zone.is-selected {
+  border-color: #ff7f50;
+  background: rgba(255, 240, 235, 0.55);
+}
+
+.neo-upload-icon {
+  width: 92px;
+  height: 92px;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff0eb;
+  color: #ff7f50;
+  font-weight: 800;
+}
+
+.neo-upload-zone h2 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.neo-upload-zone p {
+  max-width: 520px;
+  margin: 0;
+  color: #64748b;
+}
+
+.neo-upload-actions {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.neo-ghost-btn {
+  background: #fff;
+  color: #64748b;
+  padding: 12px 18px;
+  box-shadow: 6px 6px 12px #e0e0e0, -6px -6px 12px #ffffff;
+}
+
+.neo-primary-btn {
+  background: #ff7f50;
+  color: #fff;
+  padding: 12px 22px;
+}
+
+.neo-primary-btn:hover {
+  background: #ff6347;
+  transform: translateY(-1px);
+}
+
+.neo-primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.neo-success-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background: #16a34a;
+  color: #fff;
+  padding: 12px 18px;
+}
+
+.neo-hint {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.neo-progress-track {
+  width: min(520px, 90%);
+  height: 10px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.neo-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff7f50, #ff9f6b);
+  transition: width 0.25s ease;
+}
+
+.neo-status {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.neo-status.is-error {
+  color: var(--danger);
+}
+
+.neo-editor-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.neo-preview-panel,
+.neo-controls-panel {
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.neo-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.neo-preview-header h2,
+.neo-controls-panel h2 {
+  margin: 0;
+}
+
+.neo-video-preview {
+  border: 8px solid #fff;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.3);
+}
+
+.neo-video-element {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.neo-subtitle-box {
+  touch-action: none;
+}
+
+.neo-task-card {
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  background: #fff;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.neo-kicker {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.neo-mono {
+  margin: 2px 0 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  color: #334155;
+  word-break: break-all;
+}
+
+.neo-task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.neo-control-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.neo-slider-group {
+  display: grid;
+  gap: 6px;
+}
+
+.neo-slider-label {
+  font-size: 14px;
+  color: #334155;
+}
+
+.neo-slider-row,
+.neo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.neo-range {
+  flex: 1;
+  accent-color: #ff7f50;
+}
+
+.neo-number-input {
+  width: 96px;
+}
+
+.neo-field-error {
+  color: var(--danger);
+  font-size: 13px;
+}
+
+.neo-align-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.neo-pill-btn {
+  background: #e2e8f0;
+  color: #475569;
+  padding: 9px 12px;
+}
+
+.neo-pill-btn.is-active {
+  background: #ff7f50;
+  color: #fff;
+}
+
+.neo-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #334155;
+}
+
+@media (max-width: 980px) {
+  .neo-config-grid,
+  .neo-editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .neo-upload-zone h2 {
+    font-size: 24px;
+  }
+}
