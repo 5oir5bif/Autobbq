@@ -194,6 +194,4 @@ npm run test
 - styleConfig 校验
 - job 状态查询
 
-## 安全与开源注意事项
-
 
