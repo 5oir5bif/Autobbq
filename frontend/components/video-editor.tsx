@@ -224,13 +224,13 @@ function SliderNumberControl({
   };
 
   return (
-    <label style={{ display: "grid", gap: 6 }}>
-      <span>
+    <label className="neo-slider-group">
+      <span className="neo-slider-label">
         {label}：{value.toFixed(decimals)}
       </span>
-      <div className="row" style={{ alignItems: "stretch" }}>
+      <div className="neo-slider-row">
         <input
-          style={{ flex: 1 }}
+          className="neo-range"
           type="range"
           min={min}
           max={max}
@@ -244,6 +244,7 @@ function SliderNumberControl({
           }}
         />
         <input
+          className="neo-number-input"
           type="number"
           min={min}
           max={max}
@@ -260,10 +261,9 @@ function SliderNumberControl({
               applyParsedValue(inputValue, true);
             }
           }}
-          style={{ width: 96 }}
         />
       </div>
-      {errorMessage ? <span style={{ color: "var(--danger)", fontSize: 13 }}>{errorMessage}</span> : null}
+      {errorMessage ? <span className="neo-field-error">{errorMessage}</span> : null}
     </label>
   );
 }
@@ -615,334 +615,353 @@ export function VideoEditor({ videoId }: { videoId: string }) {
 
   const textAlignOptions: TextAlignMode[] = ["left", "center", "right"];
 
+
   if (loading) {
-    return <div className="panel">加载中...</div>;
+    return <div className="neo-card">加载中...</div>;
   }
 
   if (!video) {
-    return <div className="panel">视频不存在</div>;
+    return <div className="neo-card">视频不存在</div>;
   }
 
   return (
-    <div className="editor-grid">
-      <div className="panel">
-        <h2 style={{ marginTop: 0 }}>字幕预览</h2>
-        <div
-          ref={wrapperRef}
-          style={{
-            position: "relative",
-            width: "100%",
-            background: "#000",
-            borderRadius: 12,
-            overflow: "hidden",
-          }}
-        >
-          <video
-            ref={videoRef}
-            src={video.originalUrl}
-            controls
-            style={{ display: "block", width: "100%", height: "auto" }}
-            onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
-          />
-
-          <div role="presentation" onPointerDown={startDrag} style={subtitleBoxStyle}>
-            <div style={subtitleTextStyle}>{computedSubtitle.text}</div>
-            {computedSubtitle.truncated ? (
-              <div style={{ position: "absolute", right: 8, bottom: 6, fontSize: 11, color: "#f8fafc", opacity: 0.75 }}>…</div>
-            ) : null}
-
-            {handles.map((item) => (
-              <div
-                key={item.handle}
-                role="presentation"
-                onPointerDown={(event) => startResize(event, item.handle)}
-                style={{
-                  ...handleBaseStyle,
-                  ...item.style,
-                }}
-              />
-            ))}
+    <div className="neo-editor-page">
+      <div className="neo-editor-grid">
+        <section className="neo-card neo-preview-panel">
+          <div className="neo-preview-header">
+            <button className="neo-icon-btn" type="button" onClick={() => router.push("/")}>
+              返回
+            </button>
+            <h2>预览与校对</h2>
           </div>
-        </div>
-      </div>
 
-      <div className="panel" style={{ display: "grid", gap: 12, alignContent: "start" }}>
-        <h2 style={{ marginTop: 0 }}>样式设置</h2>
+          <div
+            ref={wrapperRef}
+            className="neo-video-preview"
+            style={{
+              position: "relative",
+              width: "100%",
+              background: "#000",
+              borderRadius: 16,
+              overflow: "hidden",
+            }}
+          >
+            <video
+              ref={videoRef}
+              src={video.originalUrl}
+              controls
+              className="neo-video-element"
+              onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+            />
 
-        <SliderNumberControl
-          fieldKey="fontSize"
-          label="字体大小(px)"
-          value={styleConfig.fontSize}
-          min={12}
-          max={120}
-          step={1}
-          decimals={0}
-          errorMessage={errors.fontSize}
-          onErrorChange={setError}
-          onValueChange={(value) =>
-            setStyleConfig((prev) => ({
-              ...prev,
-              fontSize: value,
-            }))
-          }
-        />
+            <div role="presentation" onPointerDown={startDrag} style={subtitleBoxStyle} className="neo-subtitle-box">
+              <div style={subtitleTextStyle}>{computedSubtitle.text}</div>
+              {computedSubtitle.truncated ? (
+                <div style={{ position: "absolute", right: 8, bottom: 6, fontSize: 11, color: "#f8fafc", opacity: 0.75 }}>
+                  …
+                </div>
+              ) : null}
 
-        <SliderNumberControl
-          fieldKey="positionX"
-          label="X 位置"
-          value={styleConfig.position.x}
-          min={0}
-          max={1}
-          step={0.01}
-          errorMessage={errors.positionX}
-          onErrorChange={setError}
-          onValueChange={(value) =>
-            setStyleConfig((prev) => ({
-              ...prev,
-              position: {
-                ...prev.position,
-                x: clamp(value, prev.maxWidthRatio / 2, 1 - prev.maxWidthRatio / 2),
-              },
-            }))
-          }
-        />
+              {handles.map((item) => (
+                <div
+                  key={item.handle}
+                  role="presentation"
+                  onPointerDown={(event) => startResize(event, item.handle)}
+                  style={{
+                    ...handleBaseStyle,
+                    ...item.style,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
 
-        <SliderNumberControl
-          fieldKey="positionY"
-          label="Y 位置"
-          value={styleConfig.position.y}
-          min={0}
-          max={1}
-          step={0.01}
-          errorMessage={errors.positionY}
-          onErrorChange={setError}
-          onValueChange={(value) =>
-            setStyleConfig((prev) => ({
-              ...prev,
-              position: {
-                ...prev.position,
-                y: clamp(value, boxHeightRatio / 2, 1 - boxHeightRatio / 2),
-              },
-            }))
-          }
-        />
+          <div className="neo-task-card">
+            <div>
+              <p className="neo-kicker">当前任务 ID</p>
+              <p className="neo-mono">{video.videoId}</p>
+            </div>
 
-        <SliderNumberControl
-          fieldKey="maxWidthRatio"
-          label="字幕框宽度"
-          value={styleConfig.maxWidthRatio}
-          min={MIN_WIDTH_RATIO}
-          max={MAX_WIDTH_RATIO}
-          step={0.01}
-          errorMessage={errors.maxWidthRatio}
-          onErrorChange={setError}
-          onValueChange={(value) =>
-            setStyleConfig((prev) => ({
-              ...prev,
-              maxWidthRatio: value,
-              position: {
-                x: clamp(prev.position.x, value / 2, 1 - value / 2),
-                y: prev.position.y,
-              },
-            }))
-          }
-        />
+            <div className="neo-task-actions">
+              <button className="neo-primary-btn" type="button" disabled={rendering || cues.length === 0} onClick={handleRender}>
+                {rendering ? "正在合成..." : "确认并渲染视频"}
+              </button>
+              {outputUrl ? (
+                <a className="neo-success-btn" href={outputUrl} target="_blank" rel="noreferrer">
+                  下载成品视频
+                </a>
+              ) : null}
+              {outputUrl ? (
+                <button className="neo-ghost-btn" type="button" onClick={() => router.push("/")}>
+                  继续上传
+                </button>
+              ) : null}
+            </div>
 
-        <SliderNumberControl
-          fieldKey="boxHeightRatio"
-          label="字幕框高度"
-          value={boxHeightRatio}
-          min={MIN_HEIGHT_RATIO}
-          max={MAX_HEIGHT_RATIO}
-          step={0.01}
-          errorMessage={errors.boxHeightRatio}
-          onErrorChange={setError}
-          onValueChange={(value) => {
-            setBoxHeightRatio(value);
-            setStyleConfig((prev) => ({
-              ...prev,
-              position: {
-                x: prev.position.x,
-                y: clamp(prev.position.y, value / 2, 1 - value / 2),
-              },
-            }));
-          }}
-        />
+            <p className={`neo-status ${renderStatus.includes("失败") ? "is-error" : ""}`}>
+              {renderStatus || "可先预览效果，再生成最终视频。"}
+            </p>
+          </div>
+        </section>
 
-        <label style={{ display: "grid", gap: 6 }}>
-          字体颜色
-          <div className="row">
-            <input
-              type="color"
-              value={styleConfig.fontColor}
-              onChange={(event) =>
+        <section className="neo-card neo-controls-panel">
+          <h2>样式调节面板</h2>
+
+          <div className="neo-control-stack">
+            <SliderNumberControl
+              fieldKey="fontSize"
+              label="字体大小(px)"
+              value={styleConfig.fontSize}
+              min={12}
+              max={120}
+              step={1}
+              decimals={0}
+              errorMessage={errors.fontSize}
+              onErrorChange={setError}
+              onValueChange={(value) =>
                 setStyleConfig((prev) => ({
                   ...prev,
-                  fontColor: event.target.value,
+                  fontSize: value,
                 }))
               }
             />
-            <input
-              type="text"
-              value={styleConfig.fontColor}
-              onChange={(event) => {
-                const value = event.target.value;
+
+            <SliderNumberControl
+              fieldKey="positionX"
+              label="X 位置"
+              value={styleConfig.position.x}
+              min={0}
+              max={1}
+              step={0.01}
+              errorMessage={errors.positionX}
+              onErrorChange={setError}
+              onValueChange={(value) =>
                 setStyleConfig((prev) => ({
                   ...prev,
-                  fontColor: value,
+                  position: {
+                    ...prev.position,
+                    x: clamp(value, prev.maxWidthRatio / 2, 1 - prev.maxWidthRatio / 2),
+                  },
+                }))
+              }
+            />
+
+            <SliderNumberControl
+              fieldKey="positionY"
+              label="Y 位置"
+              value={styleConfig.position.y}
+              min={0}
+              max={1}
+              step={0.01}
+              errorMessage={errors.positionY}
+              onErrorChange={setError}
+              onValueChange={(value) =>
+                setStyleConfig((prev) => ({
+                  ...prev,
+                  position: {
+                    ...prev.position,
+                    y: clamp(value, boxHeightRatio / 2, 1 - boxHeightRatio / 2),
+                  },
+                }))
+              }
+            />
+
+            <SliderNumberControl
+              fieldKey="maxWidthRatio"
+              label="字幕框宽度"
+              value={styleConfig.maxWidthRatio}
+              min={MIN_WIDTH_RATIO}
+              max={MAX_WIDTH_RATIO}
+              step={0.01}
+              errorMessage={errors.maxWidthRatio}
+              onErrorChange={setError}
+              onValueChange={(value) =>
+                setStyleConfig((prev) => ({
+                  ...prev,
+                  maxWidthRatio: value,
+                  position: {
+                    x: clamp(prev.position.x, value / 2, 1 - value / 2),
+                    y: prev.position.y,
+                  },
+                }))
+              }
+            />
+
+            <SliderNumberControl
+              fieldKey="boxHeightRatio"
+              label="字幕框高度"
+              value={boxHeightRatio}
+              min={MIN_HEIGHT_RATIO}
+              max={MAX_HEIGHT_RATIO}
+              step={0.01}
+              errorMessage={errors.boxHeightRatio}
+              onErrorChange={setError}
+              onValueChange={(value) => {
+                setBoxHeightRatio(value);
+                setStyleConfig((prev) => ({
+                  ...prev,
+                  position: {
+                    x: prev.position.x,
+                    y: clamp(prev.position.y, value / 2, 1 - value / 2),
+                  },
                 }));
-                if (!/^#([0-9a-fA-F]{6})$/.test(value)) {
-                  setError("fontColor", "请输入 #RRGGBB 格式颜色，例如 #ffffff");
-                } else {
-                  setError("fontColor");
-                }
-              }}
-              onBlur={(event) => {
-                const value = event.target.value;
-                if (!/^#([0-9a-fA-F]{6})$/.test(value)) {
-                  setStyleConfig((prev) => ({
-                    ...prev,
-                    fontColor: "#ffffff",
-                  }));
-                  setError("fontColor", "颜色已重置，允许范围为 #RRGGBB");
-                }
               }}
             />
-          </div>
-          {errors.fontColor ? <span style={{ color: "var(--danger)", fontSize: 13 }}>{errors.fontColor}</span> : null}
-        </label>
 
-        <label style={{ display: "grid", gap: 6 }}>
-          对齐方式
-          <div className="row">
-            {textAlignOptions.map((align) => (
-              <button
-                key={align}
-                type="button"
-                className="btn"
-                onClick={() =>
+            <label className="neo-field-group">
+              <span>字体颜色</span>
+              <div className="neo-row">
+                <input
+                  type="color"
+                  value={styleConfig.fontColor}
+                  onChange={(event) =>
+                    setStyleConfig((prev) => ({
+                      ...prev,
+                      fontColor: event.target.value,
+                    }))
+                  }
+                />
+                <input
+                  type="text"
+                  value={styleConfig.fontColor}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setStyleConfig((prev) => ({
+                      ...prev,
+                      fontColor: value,
+                    }));
+                    if (!/^#([0-9a-fA-F]{6})$/.test(value)) {
+                      setError("fontColor", "请输入 #RRGGBB 格式颜色，例如 #ffffff");
+                    } else {
+                      setError("fontColor");
+                    }
+                  }}
+                  onBlur={(event) => {
+                    const value = event.target.value;
+                    if (!/^#([0-9a-fA-F]{6})$/.test(value)) {
+                      setStyleConfig((prev) => ({
+                        ...prev,
+                        fontColor: "#ffffff",
+                      }));
+                      setError("fontColor", "颜色已重置，允许范围为 #RRGGBB");
+                    }
+                  }}
+                />
+              </div>
+              {errors.fontColor ? <span className="neo-field-error">{errors.fontColor}</span> : null}
+            </label>
+
+            <label className="neo-field-group">
+              <span>对齐方式</span>
+              <div className="neo-row neo-align-row">
+                {textAlignOptions.map((align) => (
+                  <button
+                    key={align}
+                    type="button"
+                    className={`neo-pill-btn ${styleConfig.textAlign === align ? "is-active" : ""}`}
+                    onClick={() =>
+                      setStyleConfig((prev) => ({
+                        ...prev,
+                        textAlign: align,
+                      }))
+                    }
+                  >
+                    {align === "left" ? "左对齐" : align === "center" ? "居中" : "右对齐"}
+                  </button>
+                ))}
+              </div>
+            </label>
+
+            <label className="neo-check-row">
+              <input
+                type="checkbox"
+                checked={styleConfig.stroke.enabled}
+                onChange={(event) =>
                   setStyleConfig((prev) => ({
                     ...prev,
-                    textAlign: align,
+                    stroke: {
+                      ...prev.stroke,
+                      enabled: event.target.checked,
+                    },
                   }))
                 }
-                style={{
-                  background: styleConfig.textAlign === align ? "var(--accent-dark)" : "#64748b",
-                }}
-              >
-                {align === "left" ? "左对齐" : align === "center" ? "居中" : "右对齐"}
-              </button>
-            ))}
+              />
+              启用描边
+            </label>
+
+            <SliderNumberControl
+              fieldKey="strokeWidth"
+              label="描边宽度"
+              value={styleConfig.stroke.width}
+              min={0}
+              max={10}
+              step={1}
+              decimals={0}
+              errorMessage={errors.strokeWidth}
+              onErrorChange={setError}
+              onValueChange={(value) =>
+                setStyleConfig((prev) => ({
+                  ...prev,
+                  stroke: {
+                    ...prev.stroke,
+                    width: value,
+                  },
+                }))
+              }
+            />
+
+            <label className="neo-check-row">
+              <input
+                type="checkbox"
+                checked={styleConfig.shadow.enabled}
+                onChange={(event) =>
+                  setStyleConfig((prev) => ({
+                    ...prev,
+                    shadow: {
+                      ...prev.shadow,
+                      enabled: event.target.checked,
+                    },
+                  }))
+                }
+              />
+              启用阴影
+            </label>
+
+            <SliderNumberControl
+              fieldKey="shadowOpacity"
+              label="阴影强度"
+              value={styleConfig.shadow.opacity}
+              min={0}
+              max={1}
+              step={0.05}
+              errorMessage={errors.shadowOpacity}
+              onErrorChange={setError}
+              onValueChange={(value) =>
+                setStyleConfig((prev) => ({
+                  ...prev,
+                  shadow: {
+                    ...prev.shadow,
+                    opacity: value,
+                  },
+                }))
+              }
+            />
+
+            <label className="neo-field-group">
+              <span>字体家族</span>
+              <input
+                type="text"
+                value={styleConfig.fontFamily}
+                onChange={(event) =>
+                  setStyleConfig((prev) => ({
+                    ...prev,
+                    fontFamily: event.target.value,
+                  }))
+                }
+              />
+            </label>
           </div>
-        </label>
-
-        <label className="row">
-          <input
-            type="checkbox"
-            checked={styleConfig.stroke.enabled}
-            onChange={(event) =>
-              setStyleConfig((prev) => ({
-                ...prev,
-                stroke: {
-                  ...prev.stroke,
-                  enabled: event.target.checked,
-                },
-              }))
-            }
-          />
-          描边
-        </label>
-
-        <SliderNumberControl
-          fieldKey="strokeWidth"
-          label="描边宽度"
-          value={styleConfig.stroke.width}
-          min={0}
-          max={10}
-          step={1}
-          decimals={0}
-          errorMessage={errors.strokeWidth}
-          onErrorChange={setError}
-          onValueChange={(value) =>
-            setStyleConfig((prev) => ({
-              ...prev,
-              stroke: {
-                ...prev.stroke,
-                width: value,
-              },
-            }))
-          }
-        />
-
-        <label className="row">
-          <input
-            type="checkbox"
-            checked={styleConfig.shadow.enabled}
-            onChange={(event) =>
-              setStyleConfig((prev) => ({
-                ...prev,
-                shadow: {
-                  ...prev.shadow,
-                  enabled: event.target.checked,
-                },
-              }))
-            }
-          />
-          阴影
-        </label>
-
-        <SliderNumberControl
-          fieldKey="shadowOpacity"
-          label="阴影强度"
-          value={styleConfig.shadow.opacity}
-          min={0}
-          max={1}
-          step={0.05}
-          errorMessage={errors.shadowOpacity}
-          onErrorChange={setError}
-          onValueChange={(value) =>
-            setStyleConfig((prev) => ({
-              ...prev,
-              shadow: {
-                ...prev.shadow,
-                opacity: value,
-              },
-            }))
-          }
-        />
-
-        <label>
-          字体族
-          <input
-            type="text"
-            value={styleConfig.fontFamily}
-            onChange={(event) =>
-              setStyleConfig((prev) => ({
-                ...prev,
-                fontFamily: event.target.value,
-              }))
-            }
-          />
-        </label>
-
-        <button className="btn" type="button" disabled={rendering || cues.length === 0} onClick={handleRender}>
-          {rendering ? "渲染中..." : "生成最终视频"}
-        </button>
-
-        <p style={{ margin: 0, color: renderStatus.includes("失败") ? "var(--danger)" : "var(--text-muted)" }}>
-          {renderStatus || "可先预览效果，再生成最终视频。"}
-        </p>
-
-        {outputUrl ? (
-          <>
-            <a href={outputUrl} target="_blank" rel="noreferrer">
-              下载已烧录字幕视频
-            </a>
-            <button className="btn" type="button" onClick={() => router.push("/")}>
-              继续上传
-            </button>
-          </>
-        ) : null}
+        </section>
       </div>
     </div>
   );
