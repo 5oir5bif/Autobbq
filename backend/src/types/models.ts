@@ -1,5 +1,3 @@
-export type QueueJobName = "processVideo" | "renderVideo";
-
 export interface Cue {
   startSec: number;
   endSec: number;
@@ -45,12 +43,6 @@ export interface RenderResult {
 export interface PositionConfig {
   x: number;
   y: number;
-}
-
-export interface ToggleNumberConfig {
-  enabled: boolean;
-  width?: number;
-  opacity?: number;
 }
 
 export interface StyleConfig {

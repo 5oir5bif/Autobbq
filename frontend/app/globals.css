@@ -1,13 +1,21 @@
 :root {
-  --bg-top: #eff6ff;
-  --bg-bottom: #ecfdf5;
-  --panel: #ffffff;
-  --panel-border: #dbeafe;
-  --text-main: #0f172a;
-  --text-muted: #475569;
-  --accent: #0ea5e9;
-  --accent-dark: #0284c7;
-  --danger: #ef4444;
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-muted: #f1f5f4;
+  --surface-strong: #0f172a;
+  --border: #d9e2df;
+  --border-strong: #b9c7c3;
+  --text-main: #101828;
+  --text-muted: #667085;
+  --text-soft: #98a2b3;
+  --accent: #0f766e;
+  --accent-strong: #115e59;
+  --accent-soft: #ccfbf1;
+  --blue: #2563eb;
+  --amber: #b7791f;
+  --danger: #dc2626;
+  --shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
+  --radius: 8px;
 }
 
 * {
@@ -16,53 +24,71 @@
 
 html,
 body {
+  min-height: 100%;
   margin: 0;
   padding: 0;
   color: var(--text-main);
-  font-family: "Segoe UI", "PingFang SC", "Noto Sans SC", sans-serif;
-  background: radial-gradient(circle at 0% 0%, var(--bg-top), var(--bg-bottom));
-  min-height: 100%;
+  background: var(--bg);
+  font-family: Inter, "Segoe UI", "PingFang SC", "Noto Sans SC", sans-serif;
+}
+
+body {
+  min-width: 320px;
+}
+
+button,
+input,
+select {
+  font: inherit;
 }
 
 a {
-  color: var(--accent-dark);
+  color: var(--accent-strong);
 }
 
 main {
-  width: min(1120px, 94vw);
+  width: min(1240px, calc(100vw - 40px));
   margin: 0 auto;
-  padding: 32px 0 56px;
+  padding: 24px 0 48px;
 }
 
-.panel {
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+.panel,
+.neo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.btn,
+.neo-icon-btn,
+.neo-ghost-btn,
+.neo-primary-btn,
+.neo-success-btn,
+.neo-pill-btn {
+  min-height: 40px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.btn:disabled,
+.neo-primary-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
 }
 
 .btn {
-  border: none;
-  border-radius: 10px;
   padding: 10px 16px;
-  font-weight: 600;
-  cursor: pointer;
   background: var(--accent);
-  color: #fff;
-  transition: background 0.2s ease;
+  color: #ffffff;
 }
 
-.btn:hover {
-  background: var(--accent-dark);
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.row {
+.row,
+.neo-row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -74,102 +100,288 @@ main {
   gap: 16px;
 }
 
-@media (max-width: 980px) {
-  .editor-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .neo-page,
 .neo-editor-page {
-  min-height: calc(100vh - 88px);
+  min-height: calc(100vh - 72px);
 }
 
 .neo-shell {
   display: grid;
-  gap: 20px;
-}
-
-.neo-card {
-  background: #fff;
-  border-radius: 28px;
-  border: 1px solid #f0f0f0;
-  box-shadow: 12px 12px 24px #e0e0e0, -12px -12px 24px #ffffff;
+  gap: 18px;
 }
 
 .neo-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
 }
 
 .neo-brand {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: 12px;
 }
 
 .neo-brand h1 {
   margin: 0;
-  font-size: 28px;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.05;
 }
 
 .neo-brand p {
-  margin: 2px 0 0;
-  color: #94a3b8;
-  font-size: 12px;
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
   font-weight: 600;
 }
 
 .neo-brand-logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  background: #ff7f50;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: #ffffff;
+  font-size: 20px;
   font-weight: 900;
-  font-size: 24px;
-  transform: rotate(3deg);
-  box-shadow: 0 10px 20px rgba(255, 127, 80, 0.28);
-}
-
-.neo-icon-btn,
-.neo-ghost-btn,
-.neo-primary-btn,
-.neo-success-btn,
-.neo-pill-btn {
-  border: none;
-  cursor: pointer;
-  border-radius: 14px;
-  font-weight: 700;
-  transition: 0.2s ease;
 }
 
 .neo-icon-btn {
-  padding: 10px 14px;
-  background: #fff;
-  color: #64748b;
-  box-shadow: 6px 6px 12px #e0e0e0, -6px -6px 12px #ffffff;
+  padding: 0 14px;
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-main);
 }
 
-.neo-icon-btn:hover {
+.neo-icon-btn:hover,
+.neo-ghost-btn:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-muted);
+}
+
+.neo-home-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.neo-upload-zone {
+  min-height: 520px;
+  padding: 28px;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 18px;
+  border-style: dashed;
+}
+
+.neo-upload-zone.is-selected {
+  border-color: var(--accent);
+  background: #fbfffd;
+}
+
+.neo-upload-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.neo-upload-copy h2 {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(32px, 5vw, 60px);
+  line-height: 1.02;
+  word-break: break-word;
+}
+
+.neo-upload-copy p {
+  margin: 0;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.neo-file-target {
+  width: 100%;
+  min-height: 240px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  background: var(--surface-muted);
+  color: var(--text-main);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.neo-file-target:hover {
+  border-color: var(--accent);
+  background: #eefaf7;
+}
+
+.neo-upload-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.neo-upload-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.neo-primary-btn {
+  padding: 0 18px;
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.neo-primary-btn:hover {
+  background: var(--accent-strong);
   transform: translateY(-1px);
-  color: #ff7f50;
+}
+
+.neo-ghost-btn {
+  padding: 0 16px;
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-main);
+}
+
+.neo-success-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  background: var(--blue);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.neo-success-btn:hover {
+  background: #1d4ed8;
+}
+
+.neo-progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #e4e7ec;
+  overflow: hidden;
+}
+
+.neo-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--blue));
+  transition: width 0.25s ease;
+}
+
+.neo-status {
+  min-height: 20px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.neo-status.is-error,
+.neo-field-error {
+  color: var(--danger);
+}
+
+.neo-side-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.neo-run-card,
+.neo-config-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.neo-run-card {
+  box-shadow: none;
+}
+
+.neo-kicker {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.neo-steps {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: steps;
+}
+
+.neo-steps li {
+  counter-increment: steps;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.neo-steps li::before {
+  content: counter(steps);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.neo-steps li.is-done {
+  color: var(--text-main);
+}
+
+.neo-steps li.is-done::before {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
 }
 
 .neo-config-card {
-  padding: 20px;
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
-.neo-config-card h2 {
-  margin: 0;
-  font-size: 18px;
-  color: #ff7f50;
+.neo-config-card h2,
+.neo-controls-panel h2,
+.neo-preview-header h2 {
+  margin: 3px 0 0;
+  font-size: 20px;
+  line-height: 1.2;
 }
 
 .neo-config-grid {
@@ -186,9 +398,10 @@ main {
 .neo-field-group,
 .neo-slider-group {
   display: grid;
-  gap: 6px;
-  font-size: 14px;
-  color: #334155;
+  gap: 7px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .neo-config-grid input,
@@ -196,11 +409,14 @@ main {
 .neo-slider-row input,
 .neo-number-input,
 .neo-field-group select {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 10px 12px;
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
   outline: none;
-  background: #f8fafc;
+  background: var(--surface);
+  color: var(--text-main);
 }
 
 .neo-config-grid input:focus,
@@ -208,155 +424,61 @@ main {
 .neo-slider-row input:focus,
 .neo-number-input:focus,
 .neo-field-group select:focus {
-  border-color: #ff7f50;
-  box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.18);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
 }
 
 .neo-config-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
   flex-wrap: wrap;
-}
-
-.neo-upload-zone {
-  padding: 48px 28px;
-  border: 2px dashed #f0f0f0;
-  text-align: center;
-  display: grid;
-  gap: 12px;
-  justify-items: center;
-}
-
-.neo-upload-zone.is-selected {
-  border-color: #ff7f50;
-  background: rgba(255, 240, 235, 0.55);
-}
-
-.neo-upload-icon {
-  width: 92px;
-  height: 92px;
-  border-radius: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff0eb;
-  color: #ff7f50;
-  font-weight: 800;
-}
-
-.neo-upload-zone h2 {
-  margin: 0;
-  font-size: 30px;
-}
-
-.neo-upload-zone p {
-  max-width: 520px;
-  margin: 0;
-  color: #64748b;
-}
-
-.neo-upload-actions {
-  display: grid;
-  justify-items: center;
   gap: 10px;
-  margin-top: 10px;
 }
 
-.neo-ghost-btn {
-  background: #fff;
-  color: #64748b;
-  padding: 12px 18px;
-  box-shadow: 6px 6px 12px #e0e0e0, -6px -6px 12px #ffffff;
+.neo-config-note {
+  display: grid;
+  gap: 8px;
+  padding-top: 2px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
-.neo-primary-btn {
-  background: #ff7f50;
-  color: #fff;
-  padding: 12px 22px;
-}
-
-.neo-primary-btn:hover {
-  background: #ff6347;
-  transform: translateY(-1px);
-}
-
-.neo-primary-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.neo-success-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  background: #16a34a;
-  color: #fff;
-  padding: 12px 18px;
-}
-
-.neo-hint {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #94a3b8;
-}
-
-.neo-progress-track {
-  width: min(520px, 90%);
-  height: 10px;
-  border-radius: 999px;
-  background: #e2e8f0;
-  overflow: hidden;
-  margin-top: 6px;
-}
-
-.neo-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #ff7f50, #ff9f6b);
-  transition: width 0.25s ease;
-}
-
-.neo-status {
+.neo-config-note ul {
+  display: grid;
+  gap: 6px;
   margin: 0;
-  color: #64748b;
-  font-size: 14px;
+  padding-left: 18px;
 }
 
-.neo-status.is-error {
-  color: var(--danger);
+.neo-config-note li {
+  padding-left: 2px;
 }
 
 .neo-editor-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
+  gap: 18px;
+  align-items: start;
 }
 
 .neo-preview-panel,
 .neo-controls-panel {
-  padding: 20px;
+  padding: 18px;
   display: grid;
-  gap: 14px;
+  gap: 16px;
   align-content: start;
 }
 
 .neo-preview-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.neo-preview-header h2,
-.neo-controls-panel h2 {
-  margin: 0;
+  gap: 12px;
 }
 
 .neo-video-preview {
-  border: 8px solid #fff;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.3);
+  border: 1px solid #111827;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
 }
 
 .neo-video-element {
@@ -370,28 +492,17 @@ main {
 }
 
 .neo-task-card {
-  border: 1px solid #f1f5f9;
-  border-radius: 20px;
-  background: #fff;
-  padding: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
   display: grid;
-  gap: 10px;
-}
-
-.neo-kicker {
-  margin: 0;
-  color: #94a3b8;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  gap: 12px;
 }
 
 .neo-mono {
-  margin: 2px 0 0;
+  margin: 4px 0 0;
+  color: var(--text-main);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 13px;
-  color: #334155;
   word-break: break-all;
 }
 
@@ -403,38 +514,34 @@ main {
 
 .neo-control-stack {
   display: grid;
-  gap: 12px;
-}
-
-.neo-slider-group {
-  display: grid;
-  gap: 6px;
+  gap: 14px;
 }
 
 .neo-slider-label {
-  font-size: 14px;
-  color: #334155;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
 }
 
-.neo-slider-row,
-.neo-row {
-  display: flex;
-  align-items: center;
+.neo-slider-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92px;
   gap: 10px;
+  align-items: center;
 }
 
 .neo-range {
-  flex: 1;
-  accent-color: #ff7f50;
+  width: 100%;
+  accent-color: var(--accent);
 }
 
 .neo-number-input {
-  width: 96px;
+  text-align: right;
 }
 
 .neo-field-error {
-  color: var(--danger);
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .neo-align-row {
@@ -443,31 +550,90 @@ main {
 }
 
 .neo-pill-btn {
-  background: #e2e8f0;
-  color: #475569;
-  padding: 9px 12px;
+  min-height: 38px;
+  padding: 0 10px;
+  background: var(--surface-muted);
+  border-color: var(--border);
+  color: var(--text-muted);
 }
 
 .neo-pill-btn.is-active {
-  background: #ff7f50;
-  color: #fff;
+  background: var(--surface-strong);
+  border-color: var(--surface-strong);
+  color: #ffffff;
 }
 
 .neo-check-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #334155;
+  gap: 9px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.neo-check-row input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+.neo-empty-state {
+  padding: 24px;
 }
 
 @media (max-width: 980px) {
+  main {
+    width: min(100vw - 24px, 720px);
+    padding-top: 16px;
+  }
+
+  .editor-grid,
+  .neo-home-grid,
   .neo-config-grid,
   .neo-editor-grid {
     grid-template-columns: 1fr;
   }
 
-  .neo-upload-zone h2 {
-    font-size: 24px;
+  .neo-header {
+    align-items: flex-start;
+  }
+
+  .neo-upload-zone {
+    min-height: auto;
+    padding: 18px;
+  }
+
+  .neo-file-target {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 560px) {
+  main {
+    width: min(100vw - 16px, 520px);
+  }
+
+  .neo-header,
+  .neo-upload-actions,
+  .neo-task-actions,
+  .neo-config-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .neo-icon-btn,
+  .neo-primary-btn,
+  .neo-ghost-btn,
+  .neo-success-btn {
+    width: 100%;
+  }
+
+  .neo-slider-row {
+    grid-template-columns: 1fr;
+  }
+
+  .neo-align-row {
+    grid-template-columns: 1fr;
   }
 }

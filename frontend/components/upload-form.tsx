@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   API_URL_STORAGE_KEY,
   getJob,
-  getRuntimeConfig,
   processVideo,
   setApiBaseUrl,
   updateRuntimeConfig,
@@ -25,11 +24,11 @@ export function UploadForm() {
   const [progress, setProgress] = useState(0);
   const [showConfig, setShowConfig] = useState(false);
 
-  const [apiBaseUrl, setApiBaseUrlInput] = useState(defaultApiUrl);
+  const [apiBaseUrl, setApiBaseUrlInput] = useState("");
   const [openAiApiKey, setOpenAiApiKey] = useState("");
-  const [openAiBaseUrl, setOpenAiBaseUrl] = useState("https://dashscope.aliyuncs.com/compatible-mode/v1");
-  const [openAiAsrModel, setOpenAiAsrModel] = useState("qwen3-asr-flash");
-  const [openAiTranslationModel, setOpenAiTranslationModel] = useState("qwen-plus");
+  const [openAiBaseUrl, setOpenAiBaseUrl] = useState("");
+  const [openAiAsrModel, setOpenAiAsrModel] = useState("");
+  const [openAiTranslationModel, setOpenAiTranslationModel] = useState("");
   const [configStatus, setConfigStatus] = useState("");
 
   useEffect(() => {
@@ -39,29 +38,10 @@ export function UploadForm() {
     }
   }, []);
 
-  useEffect(() => {
-    const loadRuntimeConfig = async () => {
-      try {
-        const config = await getRuntimeConfig();
-        setOpenAiBaseUrl(config.openAiBaseUrl || openAiBaseUrl);
-        setOpenAiAsrModel(config.openAiAsrModel || openAiAsrModel);
-        setOpenAiTranslationModel(config.openAiTranslationModel || openAiTranslationModel);
-      } catch {
-        // Keep upload flow available even when backend config endpoint is temporarily unavailable.
-      }
-    };
-
-    void loadRuntimeConfig();
-  }, []);
 
   const handleSaveConfig = async () => {
     try {
-      if (!apiBaseUrl.trim()) {
-        setConfigStatus("API URL 不能为空");
-        return;
-      }
-
-      setApiBaseUrl(apiBaseUrl.trim());
+      setApiBaseUrl(apiBaseUrl.trim() || defaultApiUrl);
 
       await updateRuntimeConfig({
         openAiApiKey: openAiApiKey.trim() || undefined,
@@ -135,100 +115,131 @@ export function UploadForm() {
       <div className="neo-shell">
         <header className="neo-header">
           <div className="neo-brand">
-            <div className="neo-brand-logo">B</div>
+            <div className="neo-brand-logo">A</div>
             <div>
               <h1>Autobbq</h1>
-              <p>AI Video Subtitle Expert</p>
+              <p>Subtitle production workspace</p>
             </div>
           </div>
           <button className="neo-icon-btn" type="button" onClick={() => setShowConfig((prev) => !prev)}>
-            设置
+            {showConfig ? "关闭设置" : "设置"}
           </button>
         </header>
 
-        {showConfig ? (
-          <section className="neo-card neo-config-card">
-            <h2>API 运行配置</h2>
-            <div className="neo-config-grid">
-              <label>
-                Backend URL
-                <input value={apiBaseUrl} onChange={(event) => setApiBaseUrlInput(event.target.value)} />
-              </label>
-              <label>
-                API Key
-                <input
-                  type="password"
-                  placeholder="留空表示不更新"
-                  value={openAiApiKey}
-                  onChange={(event) => setOpenAiApiKey(event.target.value)}
-                />
-              </label>
-              <label>
-                ASR 模型
-                <input value={openAiAsrModel} onChange={(event) => setOpenAiAsrModel(event.target.value)} />
-              </label>
-              <label>
-                翻译模型
-                <input
-                  value={openAiTranslationModel}
-                  onChange={(event) => setOpenAiTranslationModel(event.target.value)}
-                />
-              </label>
-              <label className="neo-full-span">
-                Base URL
-                <input value={openAiBaseUrl} onChange={(event) => setOpenAiBaseUrl(event.target.value)} />
-              </label>
+        <div className="neo-home-grid">
+          <section
+            className={"neo-card neo-upload-zone " + (file ? "is-selected" : "")}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={handleDrop}
+          >
+            <div className="neo-upload-copy">
+              <span className="neo-kicker">Upload</span>
+              <h2>{file ? file.name : "英文视频转中文字幕"}</h2>
+              <p>MP4, MOV, WEBM</p>
             </div>
-            <div className="neo-config-actions">
-              <button className="neo-primary-btn" type="button" onClick={handleSaveConfig}>
-                保存配置
+
+            <button className="neo-file-target" type="button" onClick={openFilePicker}>
+              <span className="neo-upload-icon">+</span>
+              <span>{file ? "更换视频文件" : "选择视频文件"}</span>
+            </button>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              hidden
+              accept="video/mp4,video/quicktime,video/webm"
+              onChange={(event) => {
+                const selected = event.target.files?.[0] ?? null;
+                setFile(selected);
+                if (selected) {
+                  setStatus("已选择：" + selected.name);
+                  setProgress(0);
+                }
+              }}
+            />
+
+            <div className="neo-upload-actions">
+              <button className="neo-primary-btn" type="button" disabled={!file || busy} onClick={handleStart}>
+                {busy ? "处理中..." : "生成字幕"}
               </button>
-              <p className={`neo-status ${configStatus.includes("失败") ? "is-error" : ""}`}>
-                {configStatus || "先保存配置，再上传视频。"}
-              </p>
+              <button className="neo-ghost-btn" type="button" onClick={openFilePicker}>
+                浏览文件
+              </button>
             </div>
+
+            <div className="neo-progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
+              <div className="neo-progress-fill" style={{ width: progress + "%" }} />
+            </div>
+            <p className={"neo-status " + (status.includes("失败") ? "is-error" : "")}>{status}</p>
           </section>
-        ) : null}
 
-        <section
-          className={`neo-card neo-upload-zone ${file ? "is-selected" : ""}`}
-          onDragOver={(event) => event.preventDefault()}
-          onDrop={handleDrop}
-        >
-          <div className="neo-upload-icon">上传</div>
-          <h2>{file ? file.name : "开始你的视频转译"}</h2>
-          <p>拖拽英文视频到此处，我们将自动生成中文字幕并支持在线调节样式。</p>
+          <aside className="neo-side-panel">
+            <div className="neo-run-card">
+              <span className="neo-kicker">Pipeline</span>
+              <ol className="neo-steps">
+                <li className={progress >= 20 ? "is-done" : ""}>上传</li>
+                <li className={progress > 20 ? "is-done" : ""}>识别</li>
+                <li className={progress > 50 ? "is-done" : ""}>翻译</li>
+                <li className={progress >= 100 ? "is-done" : ""}>编辑</li>
+              </ol>
+            </div>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            hidden
-            accept="video/mp4,video/quicktime,video/webm"
-            onChange={(event) => {
-              const selected = event.target.files?.[0] ?? null;
-              setFile(selected);
-              if (selected) {
-                setStatus(`已选择：${selected.name}`);
-                setProgress(0);
-              }
-            }}
-          />
+            {showConfig ? (
+              <section className="neo-config-card">
+                <h2>API 配置</h2>
+                <div className="neo-config-grid">
+                  <label>
+                    Backend URL
+                    <input placeholder={defaultApiUrl} value={apiBaseUrl} onChange={(event) => setApiBaseUrlInput(event.target.value)} />
+                  </label>
+                  <label>
+                    API Key
+                    <input
+                      type="password"
+                      placeholder="留空表示不更新"
+                      value={openAiApiKey}
+                      onChange={(event) => setOpenAiApiKey(event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    ASR 模型
+                    <input placeholder="OpenAI: gpt-4o-transcribe；DashScope: qwen3.5-omni-plus" value={openAiAsrModel} onChange={(event) => setOpenAiAsrModel(event.target.value)} />
+                  </label>
+                  <label>
+                    翻译模型
+                    <input
+                      placeholder="OpenAI: gpt-5.4-mini；DashScope: qwen3.7-plus"
+                      value={openAiTranslationModel}
+                      onChange={(event) => setOpenAiTranslationModel(event.target.value)}
+                    />
+                  </label>
+                  <label className="neo-full-span">
+                    Base URL
+                    <input placeholder="OpenAI: https://api.openai.com/v1；DashScope: compatible-mode/v1" value={openAiBaseUrl} onChange={(event) => setOpenAiBaseUrl(event.target.value)} />
+                  </label>
+                </div>
+                <div className="neo-config-actions">
+                  <button className="neo-primary-btn" type="button" onClick={handleSaveConfig}>
+                    保存配置
+                  </button>
+                  <p className={"neo-status " + (configStatus.includes("失败") ? "is-error" : "")}>
+                    {configStatus || "留空表示继续使用后端当前配置"}
+                  </p>
+                </div>
 
-          <div className="neo-upload-actions">
-            <button className="neo-ghost-btn" type="button" onClick={openFilePicker}>
-              {file ? "重新选择文件" : "选择本地视频"}
-            </button>
-            <button className="neo-primary-btn" type="button" disabled={!file || busy} onClick={handleStart}>
-              {busy ? "视频处理中..." : "一键生成字幕"}
-            </button>
-            <span className="neo-hint">Supports MP4, MOV, WEBM</span>
-          </div>
-
-          <div className="neo-progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
-            <div className="neo-progress-fill" style={{ width: `${progress}%` }} />
-          </div>
-          <p className={`neo-status ${status.includes("失败") ? "is-error" : ""}`}>{status}</p>
-        </section>
+                <div className="neo-config-note">
+                  <span className="neo-kicker">Model note</span>
+                  <ul>
+                    <li>平台：OpenAI API 或 OpenAI-compatible 网关，例如 DashScope compatible mode。</li>
+                    <li>ASR：gpt-4o-transcribe、gpt-4o-mini-transcribe、whisper-1；DashScope 可试 qwen3.5-omni-plus。</li>
+                    <li>翻译：gpt-5.5、gpt-5.4-mini；DashScope 可试 qwen3.7-plus、qwen3.6-flash。</li>
+                    <li>如果模型只支持 Responses API，需要先升级后端接口。</li>
+                  </ul>
+                </div>
+              </section>
+            ) : null}
+          </aside>
+        </div>
       </div>
     </div>
   );

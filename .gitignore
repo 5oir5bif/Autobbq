@@ -25,6 +25,9 @@ backend/storage/subtitles/*
 backend/storage/output/*
 backend/storage/temp/*
 backend/storage/data/*.json
+backend/storage/data/*.json.migrated
+backend/storage/data/*.sqlite
+backend/storage/data/*.sqlite-*
 !backend/storage/uploads/.gitkeep
 !backend/storage/subtitles/.gitkeep
 !backend/storage/output/.gitkeep

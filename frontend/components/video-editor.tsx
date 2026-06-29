@@ -571,7 +571,7 @@ export function VideoEditor({ videoId }: { videoId: string }) {
     border: "1px dashed rgba(255,255,255,0.9)",
     borderRadius: 8,
     padding: 8,
-    background: "rgba(0,0,0,0.15)",
+    background: "rgba(2, 6, 23, 0.22)",
     cursor: isDragging ? "grabbing" : "grab",
     userSelect: "none",
   };
@@ -596,7 +596,7 @@ export function VideoEditor({ videoId }: { videoId: string }) {
     position: "absolute",
     width: 12,
     height: 12,
-    background: "#0ea5e9",
+    background: "#14b8a6",
     border: "2px solid #fff",
     borderRadius: 3,
     zIndex: 2,
@@ -617,11 +617,11 @@ export function VideoEditor({ videoId }: { videoId: string }) {
 
 
   if (loading) {
-    return <div className="neo-card">加载中...</div>;
+    return <div className="neo-card neo-empty-state">加载中...</div>;
   }
 
   if (!video) {
-    return <div className="neo-card">视频不存在</div>;
+    return <div className="neo-card neo-empty-state">视频不存在</div>;
   }
 
   return (
@@ -632,7 +632,10 @@ export function VideoEditor({ videoId }: { videoId: string }) {
             <button className="neo-icon-btn" type="button" onClick={() => router.push("/")}>
               返回
             </button>
-            <h2>预览与校对</h2>
+            <div>
+              <span className="neo-kicker">Editor</span>
+              <h2>预览与校对</h2>
+            </div>
           </div>
 
           <div
@@ -642,7 +645,7 @@ export function VideoEditor({ videoId }: { videoId: string }) {
               position: "relative",
               width: "100%",
               background: "#000",
-              borderRadius: 16,
+              borderRadius: 12,
               overflow: "hidden",
             }}
           >
@@ -705,7 +708,10 @@ export function VideoEditor({ videoId }: { videoId: string }) {
         </section>
 
         <section className="neo-card neo-controls-panel">
-          <h2>样式调节面板</h2>
+          <div>
+            <span className="neo-kicker">Style</span>
+            <h2>字幕样式</h2>
+          </div>
 
           <div className="neo-control-stack">
             <SliderNumberControl

@@ -152,6 +152,24 @@ Docker 会启动前端、后端和 Redis。
 | `OPENAI_ASR_MODEL` | ASR 模型名 |
 | `OPENAI_TRANSLATION_MODEL` | 翻译模型名 |
 
+## 支持模型参考
+
+当前后端走的是 OpenAI-compatible 接口：
+
+- OpenAI ASR 路径：`/audio/transcriptions`
+- DashScope special path：`/chat/completions` + audio input
+- 翻译路径：`/chat/completions`
+
+可优先尝试这些模型：
+
+| 平台 | ASR | 翻译 / 文本 |
+| --- | --- | --- |
+| OpenAI | `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`, `whisper-1` | `gpt-5.5`, `gpt-5.4-mini`, `gpt-5.4-nano` |
+| DashScope compatible mode | `qwen3.5-omni-plus`, `qwen3.5-omni-plus-realtime` | `qwen3.7-plus`, `qwen3.6-flash`, `qwen3.7-max` |
+| DashScope 专业 ASR | `fun-asr`, `fun-asr-realtime` | 不适用 |
+
+注意：OpenAI 最新文本模型主要按官方 Responses API / SDK 文档推荐使用；本项目当前翻译 provider 仍然调用 `/chat/completions`。如果某个模型或网关不兼容这个接口，需要先改 `backend/src/providers/openAiProvider.ts`。
+
 本地开发默认可以直接用 Mock：
 
 ```env
@@ -177,8 +195,8 @@ TRANSLATION_PROVIDER=mock
 {
   "openAiApiKey": "optional",
   "openAiBaseUrl": "https://api.openai.com/v1",
-  "openAiAsrModel": "gpt-4o-mini-transcribe",
-  "openAiTranslationModel": "gpt-4o-mini"
+  "openAiAsrModel": "gpt-4o-transcribe",
+  "openAiTranslationModel": "gpt-5.4-mini"
 }
 ```
 
