@@ -6,33 +6,29 @@ node_modules/
 .env
 .env.local
 .env.*.local
-backend/.env
 frontend/.env.local
 *.env
 !.env.example
-!backend/.env.example
 !frontend/.env.example
 
 # Build outputs
-backend/dist/
+backend-rs/target/
 frontend/.next/
 coverage/
 .turbo/
 
 # Runtime storage and generated data
-backend/storage/uploads/*
-backend/storage/subtitles/*
-backend/storage/output/*
-backend/storage/temp/*
-backend/storage/data/*.json
-backend/storage/data/*.json.migrated
-backend/storage/data/*.sqlite
-backend/storage/data/*.sqlite-*
-!backend/storage/uploads/.gitkeep
-!backend/storage/subtitles/.gitkeep
-!backend/storage/output/.gitkeep
-!backend/storage/temp/.gitkeep
-!backend/storage/data/.gitkeep
+storage/uploads/*
+storage/subtitles/*
+storage/output/*
+storage/temp/*
+storage/data/*.sqlite
+storage/data/*.sqlite-*
+!storage/uploads/.gitkeep
+!storage/subtitles/.gitkeep
+!storage/output/.gitkeep
+!storage/temp/.gitkeep
+!storage/data/.gitkeep
 
 # Logs
 logs/

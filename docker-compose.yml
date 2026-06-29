@@ -1,25 +1,16 @@
 services:
-  redis:
-    image: redis:7-alpine
-    container_name: autobbq-redis
-    ports:
-      - "6379:6379"
-
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: backend-rs/Dockerfile
     container_name: autobbq-backend
     ports:
       - "4000:4000"
-    env_file:
-      - ./.env
     environment:
-      REDIS_URL: redis://redis:6379
+      STORAGE_DIR: /app/storage
+      DATABASE_URL: sqlite:/app/storage/data/autobbq.sqlite
     volumes:
-      - ./backend/storage:/app/backend/storage
-    depends_on:
-      - redis
+      - ./storage:/app/storage
 
   frontend:
     build:
@@ -30,8 +21,6 @@ services:
     container_name: autobbq-frontend
     ports:
       - "3000:3000"
-    env_file:
-      - ./.env
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:4000}
     depends_on:

@@ -3,16 +3,12 @@
   "private": true,
   "version": "0.1.0",
   "workspaces": [
-    "backend",
     "frontend"
   ],
   "scripts": {
-    "dev": "concurrently \"npm:dev -w backend\" \"npm:dev -w frontend\"",
-    "build": "npm run build -w backend && npm run build -w frontend",
-    "test": "npm run test -w backend"
-  },
-  "devDependencies": {
-    "concurrently": "^9.1.2"
+    "dev": "node scripts/dev.mjs",
+    "build": "cargo build --manifest-path backend-rs/Cargo.toml --release && npm run build -w frontend",
+    "test": "cargo test --manifest-path backend-rs/Cargo.toml && npm run build -w frontend"
   },
   "engines": {
     "node": ">=22.5.0",

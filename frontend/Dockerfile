@@ -3,7 +3,6 @@ FROM node:22-bookworm-slim AS base
 WORKDIR /app
 
 COPY package.json ./package.json
-COPY backend/package.json ./backend/package.json
 COPY frontend/package.json ./frontend/package.json
 RUN npm install
 
