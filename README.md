@@ -1,121 +1,93 @@
-# AutoBBQ (Next.js + Express + BullMQ + FFmpeg)
+# AutoBBQ
 
-一个可本地运行的字幕处理 MVP：
+AutoBBQ 是一个本地跑的视频字幕工具。现在主要做这几件事：上传英文视频，生成英文字幕，翻译成中文字幕，在前端调整字幕样式，然后把中文字幕烧录回视频。
 
-1. 上传英文视频（`mp4/mov/webm`，<= 5 分钟）
-2. 后端提取英文字幕（ASR）
-3. 翻译为中文字幕并生成 `VTT/SRT`
-4. 前端实时预览并编辑字幕样式
-5. 生成并下载烧录中文字幕的视频
+项目目前还在重构中。现在能跑的是 TypeScript 后端，数据已经从 JSON 文件换成 SQLite。Rust 后端放在 `backend-rs`，目前只是迁移骨架，还没有完全替代现有后端。
+
+## 现在能做什么
+
+- 上传 `mp4`、`mov`、`webm` 视频
+- 限制视频时长和上传大小
+- 生成英文字幕
+- 翻译成中文字幕
+- 生成 `VTT` / `SRT` 字幕文件
+- 在网页里预览视频和字幕位置
+- 调整字幕字体、位置、颜色、描边、阴影、对齐方式
+- 渲染带中文字幕的成品视频
+- 用 Mock provider 本地调试
+- 接 OpenAI-compatible 的 ASR / 翻译接口
 
 ## 技术栈
 
+当前主线：
+
 - Frontend: Next.js + React + TypeScript
 - Backend: Express + TypeScript
+- Database: SQLite
 - Queue: BullMQ + Redis
 - Media: FFmpeg / FFprobe
-- Subtitle: WebVTT + SRT + ASS
-- Provider: Mock + OpenAI-compatible（可插拔）
+- Subtitle: VTT / SRT / ASS
 
-## 目录结构
+迁移方向：
+
+- Rust backend: Axum + SQLx + SQLite
+- 位置：`backend-rs`
+- 状态：骨架已建好，还没完全迁完
+
+## 目录
 
 ```txt
 .
-├── backend
-│   ├── src
-│   ├── storage
-│   └── .env.example
-├── frontend
-│   ├── app
-│   ├── components
-│   └── .env.example
-├── .env.example
+├── backend        # 当前实际运行的后端
+├── backend-rs     # Rust 后端迁移骨架
+├── frontend       # Next.js 前端
 ├── docker-compose.yml
+├── package.json
 └── README.md
 ```
 
-## 本地运行配置 (Localization & Setup)
+几个比较重要的目录：
 
-为了让项目在任何电脑可运行，配置已做抽象，你只需要配置环境变量。
+- `backend/src/api`: Express API
+- `backend/src/jobs`: BullMQ 队列和 worker
+- `backend/src/providers`: ASR / 翻译 provider
+- `backend/src/services/store.ts`: SQLite 数据层
+- `backend/storage`: 上传文件、字幕、输出视频、SQLite 数据库
+- `frontend/components`: 上传页和视频编辑器
+- `backend-rs/migrations`: Rust 侧 SQLite schema
 
-### 1) 必填/可选变量（根目录 `.env`）
+## 环境要求
 
-先复制模板：
+- Node.js `>=22.5.0`
+- npm `>=10`
+- Redis
+- FFmpeg / FFprobe
+- Docker 可选
+- Rust 可选，只有跑 `backend-rs` 时需要
 
-```bash
-cp .env.example .env
-```
+Node 22+ 是必须的，因为后端现在用了 Node 内置的 `node:sqlite`。
 
-然后按需修改以下变量：
+## 本地启动
 
-- `PORT`: 后端端口（默认 `4000`）
-- `API_BASE_URL`: 后端对外地址（默认 `http://localhost:4000`）
-- `FRONTEND_ORIGIN`: 前端地址（默认 `http://localhost:3000`）
-- `REDIS_URL`: Redis 地址（本机默认 `redis://localhost:6379`）
-- `STORAGE_DIR`: 媒体存储目录（默认 `storage`，相对 backend 目录）
-- `ASR_PROVIDER`: `mock` 或 `openai`
-- `TRANSLATION_PROVIDER`: `mock` 或 `openai`
-- `OPENAI_API_KEY`: 使用真实模型时填写
-- `OPENAI_BASE_URL`: OpenAI 或 OpenAI-compatible 网关
-- `OPENAI_ASR_MODEL`: ASR 模型名
-- `OPENAI_TRANSLATION_MODEL`: 翻译模型名
-- `NEXT_PUBLIC_API_BASE_URL`: 前端调用后端地址（默认 `http://localhost:4000`）
-
-### 2) 最简步骤
-
-1. 第一步：复制模板并编辑
-   - `cp .env.example .env`
-2. 第二步：启动依赖与服务
-   - Docker 推荐：`docker compose up --build`
-3. 第三步：浏览器打开
-   - `http://localhost:3000`
-
-### 3) 已抽象处理的部分
-
-- Provider 抽象：ASR/翻译通过接口解耦，可切换 `mock` 或 OpenAI-compatible
-- 存储路径抽象：通过 `STORAGE_DIR` 控制，不再依赖某台机器绝对路径
-- API 地址抽象：通过 `API_BASE_URL`、`NEXT_PUBLIC_API_BASE_URL` 控制
-- 任务队列抽象：BullMQ + Redis，业务流程与执行器分离
-
-## 快速启动（Docker 推荐）
-
-```bash
-docker compose up --build
-```
-
-启动后：
-
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend: [http://localhost:4000](http://localhost:4000)
-- Redis: `localhost:6379`
-
-停止：
-
-```bash
-docker compose down
-```
-
-## 本地运行（非 Docker）
-
-### 1) 安装依赖
+安装依赖：
 
 ```bash
 npm install
 ```
 
-### 2) 前端环境文件（可选）
-
-如果你不是用默认后端地址，可执行：
+复制环境变量：
 
 ```bash
-cp frontend/.env.example frontend/.env.local
+cp .env.example .env
 ```
 
-### 3) 启动 Redis
+启动 Redis。如果本机没有 Redis，可以临时用 Docker 跑一个：
 
-确保本地 Redis 运行在 `6379`（或修改 `.env` 的 `REDIS_URL`）。
+```bash
+docker run --rm -p 6379:6379 redis:7-alpine
+```
 
-### 4) 安装 FFmpeg
+安装 FFmpeg。
 
 macOS:
 
@@ -123,75 +95,241 @@ macOS:
 brew install ffmpeg
 ```
 
-Ubuntu/Debian:
+Ubuntu / Debian:
 
 ```bash
-sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+sudo apt-get update
+sudo apt-get install -y ffmpeg fonts-noto-cjk
 ```
 
-### 5) 启动前后端
+启动前后端：
 
 ```bash
 npm run dev
 ```
 
-## API 概览
+默认地址：
 
-### `POST /api/videos/upload`
+- Frontend: http://localhost:3000
+- Backend: http://localhost:4000
 
-- form-data: `file`
-- 校验：格式白名单 + 时长 <= 300 秒
-- 返回：`videoId`, `originalUrl`, `durationSec`
+## Docker 启动
 
-### `POST /api/videos/:id/process`
+```bash
+docker compose up --build
+```
 
-- 异步任务：ASR -> 翻译 -> 生成字幕
-- 返回：`jobId`
+停止：
 
-### `GET /api/jobs/:jobId`
+```bash
+docker compose down
+```
 
-- 返回：`status/progress/error/result`
-- `status`: `queued | running | succeeded | failed`
+Docker 会启动前端、后端和 Redis。
 
-### `POST /api/videos/:id/render`
+## 环境变量
 
-- 请求体：`styleConfig`
-- 返回：`jobId`
+常用的几个：
 
-### `GET /api/videos/:id/output`
+| 变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `PORT` | `4000` | 后端端口 |
+| `API_BASE_URL` | `http://localhost:4000` | 后端对外地址 |
+| `FRONTEND_ORIGIN` | `http://localhost:3000` | CORS 前端来源 |
+| `REDIS_URL` | `redis://localhost:6379` | Redis 地址 |
+| `STORAGE_DIR` | `storage` | 后端存储目录 |
+| `DATABASE_URL` | `sqlite:storage/data/autobbq.sqlite` | SQLite 地址 |
+| `ASR_PROVIDER` | `mock` | `mock` 或 `openai` |
+| `TRANSLATION_PROVIDER` | `mock` | `mock` 或 `openai` |
+| `NEXT_PUBLIC_API_BASE_URL` | `http://localhost:4000` | 前端请求后端的地址 |
 
-- 返回：最终视频 `outputUrl`
+真实模型相关：
 
-## Provider 配置
+| 变量 | 说明 |
+| --- | --- |
+| `OPENAI_API_KEY` | API key |
+| `OPENAI_BASE_URL` | OpenAI-compatible base URL |
+| `OPENAI_ASR_MODEL` | ASR 模型名 |
+| `OPENAI_TRANSLATION_MODEL` | 翻译模型名 |
 
-### 离线可跑（Mock）
+本地开发默认可以直接用 Mock：
 
 ```env
 ASR_PROVIDER=mock
 TRANSLATION_PROVIDER=mock
 ```
 
-### 真实模型（OpenAI-compatible）
+## API
 
-```env
-ASR_PROVIDER=openai
-TRANSLATION_PROVIDER=openai
-OPENAI_API_KEY=your_api_key
-OPENAI_BASE_URL=https://api.openai.com/v1
-OPENAI_ASR_MODEL=gpt-4o-mini-transcribe
-OPENAI_TRANSLATION_MODEL=gpt-4o-mini
+### `GET /health`
+
+查看后端是否正常，以及当前 provider / 上传限制等配置。
+
+### `GET /api/runtime-config`
+
+读取当前模型配置。
+
+### `POST /api/runtime-config`
+
+更新运行时模型配置。
+
+```json
+{
+  "openAiApiKey": "optional",
+  "openAiBaseUrl": "https://api.openai.com/v1",
+  "openAiAsrModel": "gpt-4o-mini-transcribe",
+  "openAiTranslationModel": "gpt-4o-mini"
+}
+```
+
+### `POST /api/videos/upload`
+
+上传视频。字段名是 `file`。
+
+返回：
+
+```json
+{
+  "videoId": "...",
+  "originalUrl": "http://localhost:4000/files/uploads/...mp4",
+  "durationSec": 123.4
+}
+```
+
+### `GET /api/videos/:id`
+
+读取视频信息，包括字幕 URL 和输出视频 URL。
+
+### `POST /api/videos/:id/process`
+
+开始 ASR 和翻译任务。
+
+```json
+{
+  "jobId": "..."
+}
+```
+
+### `GET /api/jobs/:jobId`
+
+查询任务状态。
+
+```json
+{
+  "jobId": "...",
+  "status": "queued",
+  "progress": 30
+}
+```
+
+`status` 可能是：`queued`、`running`、`succeeded`、`failed`。
+
+### `POST /api/videos/:id/render`
+
+按前端设置的字幕样式渲染最终视频。
+
+```json
+{
+  "fontSize": 35,
+  "position": { "x": 0.5, "y": 0.85 },
+  "maxWidthRatio": 0.9,
+  "stroke": { "enabled": true, "width": 2 },
+  "shadow": { "enabled": true, "opacity": 0.3 },
+  "fontFamily": "Noto Sans SC",
+  "fontColor": "#ffffff",
+  "textAlign": "center"
+}
+```
+
+### `GET /api/videos/:id/output`
+
+渲染完成后读取最终视频地址。
+
+## 存储
+
+默认存储目录：
+
+```txt
+backend/storage
+├── data        # SQLite 数据库
+├── output      # 渲染后视频
+├── subtitles   # 字幕文件
+├── temp        # 临时文件
+└── uploads     # 上传视频
+```
+
+默认数据库：
+
+```txt
+backend/storage/data/autobbq.sqlite
+```
+
+如果旧版本里有 `backend/storage/data/db.json`，后端启动时会迁移到 SQLite，然后把旧文件改名成 `db.json.migrated`。
+
+## Rust 后端
+
+`backend-rs` 是迁移用的 Rust 后端骨架。
+
+现在已经有：
+
+- `GET /health`
+- `GET /api/runtime-config`
+- `POST /api/runtime-config`
+- `GET /api/videos/:id`
+- `GET /api/videos/:id/output`
+- SQLite migration
+- `/files` 静态文件服务
+
+还没迁的：
+
+- 上传视频
+- FFprobe 读取视频信息
+- ASR provider
+- 翻译 provider
+- worker / queue
+- FFmpeg 烧录字幕
+
+有 Rust 工具链后可以试：
+
+```bash
+cd backend-rs
+cargo test
+cargo run
+```
+
+Rust 服务默认端口逻辑：先读 `RUST_BACKEND_PORT`，再读 `PORT`，最后 fallback 到 `4001`。
+
+## 常用命令
+
+```bash
+npm run dev               # 启动前端和后端
+npm run build             # 构建前端和后端
+npm run test              # 跑后端测试
+npm run build -w backend  # 只构建后端
+npm run build -w frontend # 只构建前端
+npm run test -w backend   # 只跑后端测试
 ```
 
 ## 测试
+
+目前测试覆盖：
+
+- 上传格式校验
+- 视频时长限制
+- 损坏视频错误处理
+- job 查询 API
+- render styleConfig 校验
+- SQLite store 持久化和排序
+
+运行：
 
 ```bash
 npm run test
 ```
 
-覆盖项包括：
+## 注意
 
-- 上传校验（格式/时长/损坏文件）
-- styleConfig 校验
-- job 状态查询
-
-
+- 现在真正可跑的后端还是 `backend`，不是 `backend-rs`。
+- `backend-rs` 是迁移骨架，别直接拿它替换现有后端。
+- `node:sqlite` 目前会打印 experimental warning，测试是能过的。
+- Dockerfile 已经换到 Node 22，不然 `node:sqlite` 跑不了。
